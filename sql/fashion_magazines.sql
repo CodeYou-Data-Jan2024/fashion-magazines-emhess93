@@ -1,13 +1,14 @@
---join customers table to orders to get customer name
-SELECT orders.*, customers.customer_name, subscriptions.*
+
+--display customer name and total amount paid (formatted as currency)
+SELECT customers.customer_name as Customer, printf("$%.2f",SUM(subscriptions.price_per_month * subscriptions.subscription_length)) AS 'Amount Due'
 FROM orders
-Left JOIN customers
-LEFT JOIN subscriptions
-WHERE order_status is 'unpaid' AND description is 'Fashion Magazine';
-
-
-
---multiply subs price with sub length to get total due
---format the total amount as currency with PRINTF()
-*/
---Group by Customer and sum the amount due to account for cust with >1 unpaid fashion mag
+--Bring in customer name to order table
+JOIN customers
+    ON customers.customer_id = orders.customer_id
+--Bring in subscription data to order table
+JOIN subscriptions
+    ON orders.subscription_id = subscriptions.subscription_id
+--Filter to unpaid fashion magazines
+WHERE order_status is 'unpaid' AND description is 'Fashion Magazine'
+--Aggregate data by customer name
+GROUP BY customers.customer_name;
